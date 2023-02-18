@@ -98,22 +98,22 @@ call_dots:
             do: True
             extra: "--max-loci-separation 10000000 --fdr 0.02"
         chromosight:
-            do: True
+            do: False
             extra: ""
         mustache:
-            do: True
+            do: False
             max_dist: 10000000
             extra: "-pt 0.05 -st 0.8"
     resolutions:
         - 10000
     samples:
-        - test_cool
+        - Y1
 
 compare_boundaries:
     do: False
     samples:
-        - test_cool
-        - test_cool
+        - Y1
+        - O1
     fold_change_threshold: 5
 
 call_TADs: # By just combining strong boundaries
@@ -127,4 +127,5 @@ call_TADs: # By just combining strong boundaries
             - 1000000
     max_tad_length: 1500000
     samples:
-        - test_cool
+        - Y1
+        - O1

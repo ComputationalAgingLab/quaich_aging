@@ -1,2 +1,5 @@
-sample	file
-test_cool	https://osf.io/3h9js/download
+sample	file	age	age_group
+Y1	inputs/coolers/Y1.mcool	1	Yng
+Y2	inputs/coolers/Y2.mcool	1	Yng
+O1	inputs/coolers/O1.mcool	2	Old
+O2	inputs/coolers/O2.mcool	2	Old
