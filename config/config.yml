@@ -2,8 +2,7 @@ genome: hg38
 path_genome_folder: resources/genome/
 path_genome_fasta: resources/genome/hg38.fa
 chromsizes: resources/genome/hg38_chromsizes.txt
-view: resources/test_view.txt
-
+view: resources/view1.txt
 
 # Samples file with two columns: sample name ("sample") and path/url with cool file ("file").
 # If it's URL, it will be downloaded. If the file is already downloaded it will not be overwritten.
@@ -44,7 +43,7 @@ eigenvector:
     do: True
     resolution_limits:
         - 50000
-        - 1000000
+        - 100000
 saddle:
     do: True
     bins:
@@ -62,14 +61,14 @@ pileups:
         - 10000
     distance_limits:
         - 500000
-        - 1000000
+        - 12000000
         # - 12500
         # - 102400000
     shifts: 0
     expected: True
     ooe: True #Only applies when expected is True
     arguments:
-        distal: "--maxdist 1000000"
+        distal: "--maxdist 2000000"
         by_distance: "--by_distance"
         local: "--local"
         local_rescaled: '--local --rescale --rescale_pad 1'
@@ -123,8 +122,6 @@ call_TADs: # By just combining strong boundaries
             - 50000
             - 100000
             - 200000
-            - 500000
-            - 1000000
     max_tad_length: 1500000
     samples:
         - Y1
