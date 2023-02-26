@@ -63,6 +63,9 @@ outfolders = {
     boundary_folder_name: boundary_folder,
     beds_folder_name: beds_folder,
 }
+interchrom_folder = path.normpath(
+    config.get("interchrom_folder", path.join(project_folder, "interchrom")))
+interchrom_folder_name = path.basename(interchrom_folder) 
 
 ### Input genome
 genome = config["genome"]
@@ -380,6 +383,15 @@ saddles = (
     else []
 )
 
+interchroms = (
+    expand(
+        f"{interchrom_folder}/{{sample}}_{config['interchroms']['resolution']}_interchrom.tsv",
+        sample=samples,
+    )
+    if config["interchroms"]["do"]
+    else []    
+)
+
 
 def split_dist(dist_wildcard, mindist_arg="--mindist", maxdist_arg="--maxdist"):
     if dist_wildcard == "":
@@ -411,6 +423,7 @@ rule all:
         lambda wildcards: loops_pileups,
         lambda wildcards: beds_pileups,
         lambda wildcards: saddles,
+        lambda wildcards: interchroms
 
 
 rule make_pileups:
@@ -773,6 +786,28 @@ rule make_bins:
         binsize=lambda wildcards: wildcards["resolution"],
     wrapper:
         "v1.19.1/bio/cooltools/genome/binnify"
+
+rule make_interchroms:
+    input:
+        cooler=lambda wildcards: coolfiles_dict[wildcards.sample],
+    output:
+        f"{interchrom_folder}/{{sample}}_{{resolution,[0-9]+}}_interchrom.tsv",
+    threads: 4
+    resources:
+        mem_mb=lambda wildcards, threads: threads * 8 * 1024,
+        runtime=60,
+    params:
+        resolution=config['interchroms']['resolution']
+    script:
+        "aging/interchrom.py"
+         
+    
+
+# rule plot_interchrom_pairs:
+#     input:
+#     output:
+#     run:
+
 
 
 # def download_file(file, local_filename):

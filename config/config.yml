@@ -31,6 +31,7 @@ insulation_folder: results/insulation
 tad_folder: results/tads
 loop_folder: results/loops
 boundary_folder: results/boundaries
+interchrom_folder: results/interchrom
 
 resolutions:
     - 1000000
@@ -109,7 +110,7 @@ call_dots:
         - Y1
 
 compare_boundaries:
-    do: False
+    do: True
     samples:
         - Y1
         - O1
@@ -126,3 +127,15 @@ call_TADs: # By just combining strong boundaries
     samples:
         - Y1
         - O1
+
+interchroms:
+    do: True
+    resolution: 100000
+
+compare_interchroms:
+    do: True
+    pairs:
+        - Y1 O1
+        - Y2 O1
+        - Y1 O2
+        - Y2 O2

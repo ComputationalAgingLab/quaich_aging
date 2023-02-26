@@ -32,6 +32,7 @@ test.ipynb
 
 # Data folder
 /inputs
+/tmp
 
 # Genome-related files
 /resources/genome/*.fa
