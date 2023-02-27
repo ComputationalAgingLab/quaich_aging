@@ -67,6 +67,9 @@ interchrom_folder = path.normpath(
     config.get("interchrom_folder", path.join(project_folder, "interchrom")))
 interchrom_folder_name = path.basename(interchrom_folder) 
 
+plot_folder = path.normpath(
+    config.get("plot_folder", path.join(project_folder, "plots")))
+
 ### Input genome
 genome = config["genome"]
 chroms = pd.read_csv(
@@ -79,7 +82,6 @@ chroms = pd.read_csv(
 # def will_download(link):
 #     parsed_path = urlparse(link)
 #     return False if parsed_path.scheme == "" else True
-
 
 def verify_view_cooler(clr):
     try:
@@ -392,6 +394,17 @@ interchroms = (
     else []    
 )
 
+###### Plots #######
+interchrom_pairs = [p.split(' ') for p in config['compare_interchroms']['pairs']]
+plot_interchroms = (
+    [f"{plot_folder}/{pair[0]}_over_{pair[1]}_{config['interchroms']['resolution']}_interchrom_heatmap.pdf"
+    for pair in interchrom_pairs]
+    if config["interchroms"]["do"]
+    else []    
+)
+
+all_plots = plot_interchroms + []
+
 
 def split_dist(dist_wildcard, mindist_arg="--mindist", maxdist_arg="--maxdist"):
     if dist_wildcard == "":
@@ -423,7 +436,8 @@ rule all:
         lambda wildcards: loops_pileups,
         lambda wildcards: beds_pileups,
         lambda wildcards: saddles,
-        lambda wildcards: interchroms
+        lambda wildcards: interchroms,
+        lambda wildcards: all_plots,
 
 
 rule make_pileups:
@@ -802,12 +816,22 @@ rule make_interchroms:
         "aging/interchrom.py"
          
     
-
-# rule plot_interchrom_pairs:
-#     input:
-#     output:
-#     run:
-
+rule plot_interchrom_pairs:
+    input:
+        sample_NOM =(
+            f"{interchrom_folder}/{{sampleNOM}}_{{resolution,[0-9]+}}_interchrom.tsv"
+        ),
+        sample_DEN =(
+            f"{interchrom_folder}/{{sampleDEN}}_{{resolution,[0-9]+}}_interchrom.tsv"
+        ),
+    output:
+        f"{plot_folder}/{{sampleNOM}}_over_{{sampleDEN}}_{{resolution,[0-9]+}}_interchrom_heatmap.pdf"
+    threads: 4
+    resources:
+        mem_mb=lambda wildcards, threads: threads * 8 * 1024,
+        runtime=60,
+    script:
+        "aging/plot_interchrom.py"
 
 
 # def download_file(file, local_filename):

@@ -32,6 +32,7 @@ tad_folder: results/tads
 loop_folder: results/loops
 boundary_folder: results/boundaries
 interchrom_folder: results/interchrom
+plot_folder: results/plots
 
 resolutions:
     - 1000000
@@ -133,9 +134,8 @@ interchroms:
     resolution: 100000
 
 compare_interchroms:
-    do: True
-    pairs:
-        - Y1 O1
-        - Y2 O1
-        - Y1 O2
-        - Y2 O2
+    pairs: # - nominator / denominator 
+        - O1 Y1
+        - O1 Y2
+        - O2 Y1
+        - O2 Y2
