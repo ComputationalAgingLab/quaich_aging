@@ -139,3 +139,18 @@ compare_interchroms:
         - O1 Y2
         - O2 Y1
         - O2 Y2
+
+scaling_ratio:
+    do: True
+    windows:
+        - 10
+        - 50
+        - 100
+    max_dists:
+        - 2_000_000
+        - 30_000_000
+    pairs: # - nominator / denominator 
+        - O1 Y1
+        - O1 Y2
+        - O2 Y1
+        - O2 Y2

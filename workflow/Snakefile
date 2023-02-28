@@ -403,7 +403,18 @@ plot_interchroms = (
     else []    
 )
 
-all_plots = plot_interchroms + []
+plot_scaling_ratio = (
+    expand(
+        f"{plot_folder}/scaling_ratio_{{resolution}}_maxdist={{max_dist}}_window={{window}}.pdf",
+        resolution=config['resolutions'],
+        window = config['scaling_ratio']['windows'],
+        max_dist = config['scaling_ratio']['max_dists'],
+    )
+    if config["scaling_ratio"]["do"]
+    else []    
+)
+
+all_plots = plot_interchroms + plot_scaling_ratio + []
 
 
 def split_dist(dist_wildcard, mindist_arg="--mindist", maxdist_arg="--maxdist"):
@@ -832,6 +843,30 @@ rule plot_interchrom_pairs:
         runtime=60,
     script:
         "aging/plot_interchrom.py"
+
+scaling_ratio_pairs = [p.split(' ') for p in config['scaling_ratio']['pairs']]
+rule plot_scaling_ratio:
+    input:
+        nominators = [
+            f"{expected_folder}/{pair[0]}_{{resolution}}.expected.tsv"
+            for pair in scaling_ratio_pairs
+            ],
+        denominators = [
+            f"{expected_folder}/{pair[1]}_{{resolution}}.expected.tsv"
+            for pair in scaling_ratio_pairs
+            ]
+    output:
+        f"{plot_folder}/scaling_ratio_{{resolution,[0-9]+}}_maxdist={{max_dist,[0-9]+}}_window={{window,[0-9]+}}.pdf",
+    threads: 4
+    resources:
+        mem_mb=lambda wildcards, threads: threads * 8 * 1024,
+        runtime=60,
+    params:
+        resolution=lambda wildcards: wildcards["resolution"],
+        window=lambda wildcards: wildcards["window"],
+        max_dist=lambda wildcards: wildcards["max_dist"],
+    script:
+        "aging/plot_scaling_ratio.py"
 
 
 # def download_file(file, local_filename):
