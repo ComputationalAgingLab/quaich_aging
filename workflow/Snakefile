@@ -72,9 +72,9 @@ plot_folder = path.normpath(
 
 ### Input genome
 genome = config["genome"]
-chroms = pd.read_csv(
-    f'{config["chromsizes"]}', sep="\t", names=["chrom", "start", "end"]
-)["chrom"].values
+# chroms = pd.read_csv(
+#     f'{config["chromsizes"]}', sep="\t", names=["chrom", "start", "end"]
+# )["chrom"].values
 
 ### Input cool files
 
@@ -92,6 +92,8 @@ def verify_view_cooler(clr):
     except Exception as e:
         raise ValueError(f"View not compatible with cooler!") from e
 
+view_df = pd.read_csv(config["view"], sep='\t', header=None, index_col=0)
+chroms_list = view_df.index.tolist()
 
 samples_df = pd.read_csv(config["samples"], sep="\t", header=0, comment="#")
 # samples_df.loc[:, "will_download"] = samples_df.file.apply(will_download)
@@ -248,7 +250,6 @@ if config["call_TADs"]["do"]:
         for win in config["call_TADs"]["resolutions"][resolution]:
             tad_res_win.append(f"{resolution}_{win}")
 
-# chroms = cooler.Cooler(f'{coolers_folder}/{coolfiles[0]}::resolutions/{resolutions[0]}').chroms()[:]
 
 # bedpe_mindists = [int(bedpe_pileups_mindist*2**i) for i in np.arange(0, np.log2(bedpe_pileups_maxdist/bedpe_pileups_mindist))]
 # bedpe_separations = [f'{mindist}-{mindist*2}' for mindist in bedpe_mindists]
@@ -414,7 +415,18 @@ plot_scaling_ratio = (
     else []    
 )
 
-all_plots = plot_interchroms + plot_scaling_ratio + []
+plot_eigvec_corr = (
+    expand(
+        f"{plot_folder}/eig_corr_{{resolution}}_E={{eig}}_chrom={{chrom}}.pdf",
+        resolution=eigenvector_resolutions,
+        eig = config['eigenvectors_correlation']['eig'],
+        chrom = ['all'] + chroms_list
+    )
+    if config["eigenvectors_correlation"]["do"]
+    else []    
+)
+
+all_plots = plot_interchroms + plot_scaling_ratio + plot_eigvec_corr
 
 
 def split_dist(dist_wildcard, mindist_arg="--mindist", maxdist_arg="--maxdist"):
@@ -812,7 +824,7 @@ rule make_bins:
     wrapper:
         "v1.19.1/bio/cooltools/genome/binnify"
 
-rule make_interchroms:
+rule make_interf:
     input:
         cooler=lambda wildcards: coolfiles_dict[wildcards.sample],
     output:
@@ -867,6 +879,29 @@ rule plot_scaling_ratio:
         max_dist=lambda wildcards: wildcards["max_dist"],
     script:
         "aging/plot_scaling_ratio.py"
+
+rule plot_eigenvectors_correlation:
+    input:
+        eigvecs=[
+            f"{eigenvectors_folder}/{sample}_{{resolution}}_eigenvectors.cis.vecs.tsv"
+            for sample in samples
+            ],
+        eigvals=[
+            f"{eigenvectors_folder}/{sample}_{{resolution}}_eigenvectors.cis.lam.txt"
+            for sample in samples
+            ]
+    output:
+        f"{plot_folder}/eig_corr_{{resolution}}_E={{eig}}_chrom={{chrom}}.pdf"
+    threads: 4
+    resources:
+        mem_mb=lambda wildcards, threads: threads * 8 * 1024,
+        runtime=60,
+    params:
+        resolution=lambda wildcards: wildcards["resolution"],
+        eig=lambda wildcards: wildcards["eig"],
+        chrom=lambda wildcards: wildcards["chrom"],
+    script:
+        "aging/plot_eigvec_corr.py"
 
 
 # def download_file(file, local_filename):

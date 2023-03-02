@@ -44,7 +44,7 @@ ignore_resolutions_more_than: 1000000
 eigenvector:
     do: True
     resolution_limits:
-        - 50000
+        - 10000
         - 100000
 saddle:
     do: True
@@ -154,3 +154,10 @@ scaling_ratio:
         - O1 Y2
         - O2 Y1
         - O2 Y2
+
+eigenvectors_correlation:
+    do: True
+    eig:
+        - E1
+        - E2
+        - best #best means that the eigenvector with largest corresponding value of lambda
