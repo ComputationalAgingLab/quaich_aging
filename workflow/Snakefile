@@ -426,7 +426,19 @@ plot_eigvec_corr = (
     else []    
 )
 
-all_plots = plot_interchroms + plot_scaling_ratio + plot_eigvec_corr
+tad_pairs = ['_over_'.join(p.split(' ')) for p in config['tad_ratio']['pairs']]
+plot_avg_tad_ratio = (
+    expand(
+        f"{plot_folder}/{{pair}}_avg_TAD_ratio_{{tad_res_win}}.pdf",
+        pair=tad_pairs,
+        resolution=list(config['call_TADs']['resolutions'].keys()),
+        tad_res_win=tad_res_win
+    )
+    if (config["tad_ratio"]["do"]) and (config['call_TADs']['do'])
+    else []    
+)
+
+all_plots = plot_interchroms + plot_scaling_ratio + plot_eigvec_corr + plot_avg_tad_ratio
 
 
 def split_dist(dist_wildcard, mindist_arg="--mindist", maxdist_arg="--maxdist"):
@@ -902,6 +914,27 @@ rule plot_eigenvectors_correlation:
         chrom=lambda wildcards: wildcards["chrom"],
     script:
         "aging/plot_eigvec_corr.py"
+
+rule plot_avg_tad_ratio:
+    input:
+        sample_NOM = f"{coolers_folder}/{{sampleNOM}}.mcool",
+        sample_DEN = f"{coolers_folder}/{{sampleDEN}}.mcool",
+        tad_NOM = f"{tad_folder}/TADs_{{sampleNOM}}_{{resolution}}_{{win}}.bed",
+        tad_DEN = f"{tad_folder}/TADs_{{sampleDEN}}_{{resolution}}_{{win}}.bed",
+        exp_NOM = f"{expected_folder}/{{sampleNOM}}_{{resolution}}.expected.tsv",
+        exp_DEN = f"{expected_folder}/{{sampleDEN}}_{{resolution}}.expected.tsv",
+        view = config["view"],
+    output:
+        f"{plot_folder}/{{sampleNOM}}_over_{{sampleDEN}}_avg_TAD_ratio_{{resolution,[0-9]+}}_{{win}}.pdf"
+    threads: 4
+    resources:
+        mem_mb=lambda wildcards, threads: threads * 8 * 1024,
+        runtime=60,
+    params:
+        resolution=lambda wildcards: wildcards["resolution"],
+        win=lambda wildcards: wildcards["win"],
+    script:
+        "aging/plot_avg_tad_ratio.py"    
 
 
 # def download_file(file, local_filename):

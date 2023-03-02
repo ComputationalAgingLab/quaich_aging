@@ -161,3 +161,8 @@ eigenvectors_correlation:
         - E1
         - E2
         - best #best means that the eigenvector with largest corresponding value of lambda
+
+tad_ratio:
+    do: True
+    pairs: # - nominator / denominator; note that paired samples should be present in call_tad config
+        - O1 Y1
