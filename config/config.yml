@@ -166,3 +166,8 @@ tad_ratio:
     do: True
     pairs: # - nominator / denominator; note that paired samples should be present in call_tad config
         - O1 Y1
+
+loop_ratio: #currently only for cooltools loops
+    do: True
+    pairs: # - nominator / denominator; note that paired samples should be present in call_dots config
+        - O1 Y1

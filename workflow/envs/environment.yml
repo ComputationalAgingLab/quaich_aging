@@ -17,3 +17,4 @@ dependencies:
   - cooltools
   - seaborn=0.12.2
   - coolpuppy=1.0.0
+  - tables=3.8.0

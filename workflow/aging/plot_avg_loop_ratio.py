@@ -4,8 +4,8 @@ from matplotlib import pyplot as plt
 from coolpuppy.lib.io import load_pileup_df
 sns.set_theme(font_scale=2)
 
-def plot_average_tad_ratio(pu_nom_path, pu_den_path,
-                           name_nom, name_den, min_size,
+def plot_average_loop_ratio(pu_nom_path, pu_den_path,
+                           name_nom, name_den, mode,
                            output, 
                            ):
     #load pileups
@@ -14,7 +14,7 @@ def plot_average_tad_ratio(pu_nom_path, pu_den_path,
     divv = pu_nom['data'][0] / pu_den['data'][0]
     #plot avg tad ratio
     fig, ax = plt.subplots(1, 1, figsize=(6, 5))
-    fig.suptitle(f'Average TADs change: min size={min_size}', 
+    fig.suptitle(f'Average Loop change: mode={mode}', 
                     fontsize=20, y=1.05)
     img = ax.imshow(divv, cmap='RdBu_r', vmax=1.20, vmin=0.8, interpolation='bicubic')
     ax.set_xticks([])
@@ -31,10 +31,10 @@ def plot_average_tad_ratio(pu_nom_path, pu_den_path,
 
 
 #main
-plot_average_tad_ratio(pu_nom_path=snakemake.input.pu_NOM, 
+plot_average_loop_ratio(pu_nom_path=snakemake.input.pu_NOM, 
                        pu_den_path=snakemake.input.pu_DEN,
                        name_nom=snakemake.wildcards['sampleNOM'], 
                        name_den=snakemake.wildcards['sampleDEN'], 
-                       min_size=snakemake.params.win,
+                       mode=snakemake.params.mode,
                        output=snakemake.output[0], 
                         )

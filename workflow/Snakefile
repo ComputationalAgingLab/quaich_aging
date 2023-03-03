@@ -438,7 +438,20 @@ plot_avg_tad_ratio = (
     else []    
 )
 
-all_plots = plot_interchroms + plot_scaling_ratio + plot_eigvec_corr + plot_avg_tad_ratio
+loop_pairs = ['_over_'.join(p.split(' ')) for p in config['loop_ratio']['pairs']]
+plot_avg_loop_ratio = (
+    expand(
+        f"{plot_folder}/{{pair}}_Loops_cooltools_{{resolution}}_{{mode}}.pdf",
+        pair=loop_pairs,
+        resolution=list(config['call_dots']['resolutions']),
+        mode=['distal', 'by_distance']
+    )
+    if (config["loop_ratio"]["do"]) and (config['call_dots']['methods']['cooltools']['do'])
+    else []    
+)
+
+all_plots = plot_interchroms + plot_scaling_ratio + plot_eigvec_corr +\
+            plot_avg_tad_ratio + plot_avg_loop_ratio
 
 
 def split_dist(dist_wildcard, mindist_arg="--mindist", maxdist_arg="--maxdist"):
@@ -917,13 +930,10 @@ rule plot_eigenvectors_correlation:
 
 rule plot_avg_tad_ratio:
     input:
-        sample_NOM = f"{coolers_folder}/{{sampleNOM}}.mcool",
-        sample_DEN = f"{coolers_folder}/{{sampleDEN}}.mcool",
-        tad_NOM = f"{tad_folder}/TADs_{{sampleNOM}}_{{resolution}}_{{win}}.bed",
-        tad_DEN = f"{tad_folder}/TADs_{{sampleDEN}}_{{resolution}}_{{win}}.bed",
-        exp_NOM = f"{expected_folder}/{{sampleNOM}}_{{resolution}}.expected.tsv",
-        exp_DEN = f"{expected_folder}/{{sampleDEN}}_{{resolution}}.expected.tsv",
-        view = config["view"],
+        pu_NOM = f"{pileups_folder}/tads/{{sampleNOM}}-{{resolution}}_over_TADs_{{sampleNOM}}"
+        f"_{{resolution}}_{{win}}_expected_local_rescaled.clpy",
+        pu_DEN = f"{pileups_folder}/tads/{{sampleDEN}}-{{resolution}}_over_TADs_{{sampleDEN}}"
+        f"_{{resolution}}_{{win}}_expected_local_rescaled.clpy"
     output:
         f"{plot_folder}/{{sampleNOM}}_over_{{sampleDEN}}_avg_TAD_ratio_{{resolution,[0-9]+}}_{{win}}.pdf"
     threads: 4
@@ -935,6 +945,24 @@ rule plot_avg_tad_ratio:
         win=lambda wildcards: wildcards["win"],
     script:
         "aging/plot_avg_tad_ratio.py"    
+
+rule plot_avg_loop_ratio:
+    input:
+        pu_NOM = f"{pileups_folder}/loops/{{sampleNOM}}-{{resolution}}_over_Loops_cooltools_{{sampleDEN}}"
+        f"_expected_{{mode}}.clpy",
+        pu_DEN = f"{pileups_folder}/loops/{{sampleDEN}}-{{resolution}}_over_Loops_cooltools_{{sampleDEN}}"
+        f"_expected_{{mode}}.clpy"
+    output:
+        f"{plot_folder}/{{sampleNOM}}_over_{{sampleDEN}}_Loops_cooltools_{{resolution,[0-9]+}}_{{mode}}.pdf"
+    threads: 4
+    resources:
+        mem_mb=lambda wildcards, threads: threads * 8 * 1024,
+        runtime=60,
+    params:
+        resolution=lambda wildcards: wildcards["resolution"],
+        mode=lambda wildcards: wildcards["mode"],
+    script:
+        "aging/plot_avg_loop_ratio.py"    
 
 
 # def download_file(file, local_filename):
