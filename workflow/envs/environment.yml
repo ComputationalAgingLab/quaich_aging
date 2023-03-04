@@ -1,4 +1,4 @@
-name: quaich
+name: quaich_aging
 channels:
   - bioconda
   - conda-forge
