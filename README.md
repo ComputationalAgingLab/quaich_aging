@@ -23,7 +23,7 @@ Move to your working directory:
 
 ### Step 2: Install Snakemake and other requirements
 
-Install requirements using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html):
+Install requirements using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) (it may require some time):
 
     conda env create -f workflow/envs/environment.yml
 
@@ -37,17 +37,13 @@ Activate the conda environment:
 
     conda activate quaich_aging
 
-Test your configuration by performing a dry-run via
+Download genome fasta file necessary for the test (don't forget to permit the file execution if needed by the command `chmod +x prepare_test.sh`):
 
-    snakemake --use-conda --configfile config/config.yml -n
+    bash prepare_test.sh
 
-Execute the workflow locally via
+Execute the test workflow locally via
 
-    snakemake --use-conda --configfile config/config.yml --cores $N
-
-using `$N` cores or run it in a cluster environment via
-
-    snakemake --use-conda --configfile config/config.yml --cluster qsub --jobs 100
+    snakemake --use-conda --configfile config/config.yml --cores 10
 
 
 ### Step 4: Configure your own workflow
@@ -55,6 +51,10 @@ using `$N` cores or run it in a cluster environment via
 Configure the workflow according to your needs via editing the files in the `config/` folder. Adjust `config.yaml` to configure the workflow execution, and `samples.tsv` to specify your sample setup. If you want to use any external bed or bedpe files for pileups, describe them in the `annotations.tsv` file, and pairings of samples with annotations in `samples_annotations.tsv`.
 
 ### Step 5: Execute your own workflow
+
+Test your configuration by performing a dry-run via
+
+    snakemake --use-conda --configfile config/config.yml -n
 
 As before, execute the workflow locally via
 
@@ -64,9 +64,22 @@ using `$N` cores or run it in a cluster environment via
 
     snakemake --use-conda --configfile config/config.yml --cluster qsub --jobs 100
 
+### If the wait is too long
+
+Try [`mamba`](https://mamba.readthedocs.io/en/latest/installation.html) distributive instead of `conda` but having all its functional:
+
+    conda install -n base -c conda-forge mamba
+
+Reset your current `base` environment:
+
+    conda activate base
+
+Then install the environment using `mamba`
+
+    mamba env create -f workflow/envs/environment.yml
+
 
 <!---
-
 Each rule in the `Quaich` Snakefile specifies inputs, outputs, resources, and threads. The best values for resources and threads depend on whether `quaich` is run locally or on a cluster. Outputs of one rule are often used as inputs to another. For example, the rule `make_expected_cis` calls `cooltools compute-expected` on a mcool for a set of regions at specified resolutions to output tsv. This output is then used in make_saddles, make_pileups, and call_loops_cooltools. For reproducibility and easy setup wherever possible, the rules use [snakemake wrappers](https://github.com/snakemake/snakemake-wrappers) instead of using shell/python code directly. This means every rule will have its own dedicated conda environment that is defined as part of the wrapper, and it is created the first time the pipeline is run.
 
 ```python
