@@ -2,7 +2,7 @@ genome: hg38
 path_genome_folder: resources/genome/
 path_genome_fasta: resources/genome/hg38.fa
 chromsizes: resources/genome/hg38_chromsizes.txt
-view: resources/view1.txt
+view: resources/view.txt
 
 # Samples file with two columns: sample name ("sample") and path/url with cool file ("file").
 # If it's URL, it will be downloaded. If the file is already downloaded it will not be overwritten.

@@ -49,13 +49,20 @@ using `$N` cores or run it in a cluster environment via
 
     snakemake --use-conda --configfile config/config.yml --cluster qsub --jobs 100
 
-or
-
-    snakemake --use-conda --configfile config/config.yml --drmaa --jobs 100
 
 ### Step 4: Configure your own workflow
 
 Configure the workflow according to your needs via editing the files in the `config/` folder. Adjust `config.yaml` to configure the workflow execution, and `samples.tsv` to specify your sample setup. If you want to use any external bed or bedpe files for pileups, describe them in the `annotations.tsv` file, and pairings of samples with annotations in `samples_annotations.tsv`.
+
+### Step 5: Execute your own workflow
+
+As before, execute the workflow locally via
+
+    snakemake --use-conda --configfile config/config.yml --cores $N
+
+using `$N` cores or run it in a cluster environment via
+
+    snakemake --use-conda --configfile config/config.yml --cluster qsub --jobs 100
 
 
 <!---

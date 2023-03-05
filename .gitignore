@@ -31,7 +31,7 @@ MANIFEST
 test.ipynb
 
 # Data folder
-/inputs
+/inputs_tmp
 /tmp
 
 # Genome-related files
