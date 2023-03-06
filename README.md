@@ -37,6 +37,10 @@ Activate the conda environment:
 
     conda activate quaich_aging
 
+Configure the conda environment channel priority with the following small (but critical) line:
+
+    conda config --set channel_priority strict
+
 Download genome fasta file necessary for the test (don't forget to permit the file execution if needed by the command `chmod +x prepare_test.sh`):
 
     bash prepare_test.sh
