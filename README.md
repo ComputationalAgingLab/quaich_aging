@@ -23,6 +23,10 @@ Move to your working directory:
 
 ### Step 2: Install Snakemake and other requirements
 
+Configure conda channel priority:
+
+    conda config --set channel_priority flexible
+
 Install requirements using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) (it may require some time):
 
     conda env create -f workflow/envs/environment.yml
