@@ -508,7 +508,7 @@ rule make_pileups:
         mem_mb=lambda wildcards, threads: threads * 16 * 1024,
         runtime=24 * 60,
     wrapper:
-        "v1.19.1/bio/coolpuppy"
+        "v2.0.0/bio/coolpuppy"
 
 
 def dedup_dots(dots, hiccups_filter=False):
@@ -595,7 +595,7 @@ rule call_loops_cooltools:
         mem_mb=lambda wildcards, threads: threads * 16 * 1024,
         runtime=24 * 60,
     wrapper:
-        "v1.19.1/bio/cooltools/dots"
+        "v2.0.0/bio/cooltools/dots"
 
 
 rule call_loops_chromosight:
@@ -716,7 +716,7 @@ rule make_insulation:
         mem_mb=32 * 1024,
         runtime=240,
     wrapper:
-        "v1.20.0/bio/cooltools/insulation"
+        "v2.0.0/bio/cooltools/insulation"
         
 
 rule make_saddles:
@@ -744,7 +744,7 @@ rule make_saddles:
         mem_mb=8 * 1024,
         runtime=60,
     wrapper:
-        "v1.19.1/bio/cooltools/saddle"
+        "v2.0.0/bio/cooltools/saddle"
 
 
 rule make_expected_cis:
@@ -760,7 +760,7 @@ rule make_expected_cis:
         mem_mb=lambda wildcards, threads: threads * 8 * 1024,
         runtime=60,
     wrapper:
-        "v1.19.1/bio/cooltools/expected_cis"
+        "v2.0.0/bio/cooltools/expected_cis"
 
 
 rule make_eigenvectors_cis:
@@ -783,7 +783,7 @@ rule make_eigenvectors_cis:
         mem_mb=8 * 1024,
         runtime=60,
     wrapper:
-        "v1.19.1/bio/cooltools/eigs_cis"
+        "v2.0.0/bio/cooltools/eigs_cis"
 
 
 rule make_eigenvectors_trans:
@@ -806,7 +806,7 @@ rule make_eigenvectors_trans:
         mem_mb=8 * 1024,
         runtime=60,
     wrapper:
-        "v1.19.1/bio/cooltools/eigs_trans"
+        "v2.0.0/bio/cooltools/eigs_trans"
 
 
 rule make_gc:
