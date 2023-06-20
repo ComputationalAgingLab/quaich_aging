@@ -69,6 +69,8 @@ interchrom_folder_name = path.basename(interchrom_folder)
 
 plot_folder = path.normpath(
     config.get("plot_folder", path.join(project_folder, "plots")))
+report_folder = path.normpath(
+    config.get("report_folder", path.join(project_folder, "report")))
 
 ### Input genome
 genome = config["genome"]
@@ -873,7 +875,10 @@ rule plot_interchrom_pairs:
             f"{interchrom_folder}/{{sampleDEN}}_{{resolution,[0-9]+}}_interchrom.tsv"
         ),
     output:
-        f"{plot_folder}/{{sampleNOM}}_over_{{sampleDEN}}_{{resolution,[0-9]+}}_interchrom_heatmap.pdf"
+        f"{plot_folder}/{{sampleNOM}}_over_{{sampleDEN}}_{{resolution,[0-9]+}}_interchrom_heatmap.pdf",
+        report(f"{report_folder}/{{sampleNOM}}_over_{{sampleDEN}}_{{resolution,[0-9]+}}_interchrom_heatmap.svg", 
+               category="Interchromosomal pairs", 
+               labels={"Nominator": "{sampleNOM}", "Denominator": "{sampleDEN}", "Resolution": "{resolution}"})
     threads: 4
     resources:
         mem_mb=lambda wildcards, threads: threads * 8 * 1024,
@@ -894,6 +899,9 @@ rule plot_scaling_ratio:
             ]
     output:
         f"{plot_folder}/scaling_ratio_{{resolution,[0-9]+}}_maxdist={{max_dist,[0-9]+}}_window={{window,[0-9]+}}.pdf",
+        report(f"{report_folder}/scaling_ratio_{{resolution,[0-9]+}}_maxdist={{max_dist,[0-9]+}}_window={{window,[0-9]+}}.svg", 
+               category="Scaling ratio",
+               labels={"Resolution": "{resolution}", "Max. dist.": "{max_dist}", "Window": "{window}"})
     threads: 4
     resources:
         mem_mb=lambda wildcards, threads: threads * 8 * 1024,
@@ -916,7 +924,10 @@ rule plot_eigenvectors_correlation:
             for sample in samples
             ]
     output:
-        f"{plot_folder}/eig_corr_{{resolution}}_E={{eig}}_chrom={{chrom}}.pdf"
+        f"{plot_folder}/eig_corr_{{resolution}}_E={{eig}}_chrom={{chrom}}.pdf",
+        report(f"{report_folder}/eig_corr_{{resolution}}_E={{eig}}_chrom={{chrom}}.svg",
+               category="Eigenvector correlation",
+               labels={"Resolution": "{resolution}", "Eigenvector": "{eig}", "Chromosome": "{chrom}"})
     threads: 4
     resources:
         mem_mb=lambda wildcards, threads: threads * 8 * 1024,
@@ -935,7 +946,11 @@ rule plot_avg_tad_ratio:
         pu_DEN = f"{pileups_folder}/tads/{{sampleDEN}}-{{resolution}}_over_TADs_{{sampleDEN}}"
         f"_{{resolution}}_{{win}}_expected_local_rescaled.clpy"
     output:
-        f"{plot_folder}/{{sampleNOM}}_over_{{sampleDEN}}_avg_TAD_ratio_{{resolution,[0-9]+}}_{{win}}.pdf"
+        f"{plot_folder}/{{sampleNOM}}_over_{{sampleDEN}}_avg_TAD_ratio_{{resolution,[0-9]+}}_{{win}}.pdf",
+        report(f"{report_folder}/{{sampleNOM}}_over_{{sampleDEN}}_avg_TAD_ratio_{{resolution,[0-9]+}}_{{win}}.svg",
+               category="Average TAD ratio",
+               labels={"Nominator": "{sampleNOM}", "Denominator": "{sampleDEN}", "Resolution": "{resolution}", 
+		       "Window": "{win}"})
     threads: 4
     resources:
         mem_mb=lambda wildcards, threads: threads * 8 * 1024,
@@ -953,7 +968,11 @@ rule plot_avg_loop_ratio:
         pu_DEN = f"{pileups_folder}/loops/{{sampleDEN}}-{{resolution}}_over_Loops_cooltools_{{sampleDEN}}"
         f"_expected_{{mode}}.clpy"
     output:
-        f"{plot_folder}/{{sampleNOM}}_over_{{sampleDEN}}_Loops_cooltools_{{resolution,[0-9]+}}_{{mode}}.pdf"
+        f"{plot_folder}/{{sampleNOM}}_over_{{sampleDEN}}_Loops_cooltools_{{resolution,[0-9]+}}_{{mode}}.pdf",
+        report(f"{report_folder}/{{sampleNOM}}_over_{{sampleDEN}}_Loops_cooltools_{{resolution,[0-9]+}}_{{mode}}.svg",
+               category="Average loop ratio",
+               labels={"Nominator": "{sampleNOM}", "Denominator": "{sampleDEN}", "Resolution": "{resolution}", 
+		       "Mode": "{mode}"}) 
     threads: 4
     resources:
         mem_mb=lambda wildcards, threads: threads * 8 * 1024,
@@ -964,7 +983,9 @@ rule plot_avg_loop_ratio:
     script:
         "aging/plot_avg_loop_ratio.py"    
 
-
+onsuccess:
+    from snakemake.report import auto_report
+    auto_report(workflow.persistence.dag, "results/report.html")
 # def download_file(file, local_filename):
 #     import requests
 #     import tqdm

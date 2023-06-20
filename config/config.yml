@@ -33,6 +33,7 @@ loop_folder: results/loops
 boundary_folder: results/boundaries
 interchrom_folder: results/interchrom
 plot_folder: results/plots
+report_folder: results/report
 
 resolutions:
     - 1000000

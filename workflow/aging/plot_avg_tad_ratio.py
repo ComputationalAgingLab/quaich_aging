@@ -27,7 +27,8 @@ def plot_average_tad_ratio(pu_nom_path, pu_den_path,
     cbar_ax = fig.add_axes([0.83, 0.15, 0.025, 0.7])
     fig.colorbar(img, cax=cbar_ax)
 
-    plt.savefig(output, format='pdf', dpi=300, bbox_inches='tight')
+    for out in output:
+    	plt.savefig(out, dpi=300, bbox_inches='tight')
 
 
 #main
@@ -36,5 +37,5 @@ plot_average_tad_ratio(pu_nom_path=snakemake.input.pu_NOM,
                        name_nom=snakemake.wildcards['sampleNOM'], 
                        name_den=snakemake.wildcards['sampleDEN'], 
                        min_size=snakemake.params.win,
-                       output=snakemake.output[0], 
+                       output=snakemake.output, 
                         )
