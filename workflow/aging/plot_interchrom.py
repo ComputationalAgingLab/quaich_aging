@@ -35,11 +35,12 @@ def plot_interchroms(sample_nominator, sample_denominator, output):
     cbar_ax = fig.add_axes([0.82, 0.1, 0.02, 0.75])
     cbar = fig.colorbar(im, cax=cbar_ax)
     cbar.ax.tick_params(labelsize=12)
-    plt.savefig(output, dpi=300, bbox_inches='tight', format='pdf')
+    for out in output:
+        plt.savefig(out, dpi=300, bbox_inches='tight')
 
 
 
 #main
 plot_interchroms(snakemake.input.sample_NOM, 
                  snakemake.input.sample_DEN, 
-                 snakemake.output[0])
+                 snakemake.output)

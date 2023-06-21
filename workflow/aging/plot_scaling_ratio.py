@@ -33,14 +33,15 @@ def plot_scaling_ratio(pairs, output, resolution, max_dist, window, column='coun
         smooth = tmp['nom'].rolling(window = int(window)).mean() / tmp['den'].rolling(window = int(window)).mean()
         ax.semilogx(smooth, label = f'{name1}/{name2}', lw=1.8)
     ax.legend()
-    plt.savefig(output, dpi=300, bbox_inches='tight', format='pdf')
+    for out in output:
+        plt.savefig(out, dpi=300, bbox_inches='tight')
 
 #main
 pairs = list(zip(snakemake.input.nominators, snakemake.input.denominators))
 
 plot_scaling_ratio(
     pairs=pairs,
-    output=snakemake.output[0],
+    output=snakemake.output,
     resolution=snakemake.params.resolution, 
     max_dist=snakemake.params.max_dist, 
     window=snakemake.params.window,

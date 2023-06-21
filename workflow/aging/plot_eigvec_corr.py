@@ -41,13 +41,14 @@ def plot_eigenvector_correlation(vecs, vals, output,
     ax.ax_heatmap.set_xticklabels(ax.ax_heatmap.get_xmajorticklabels(), fontsize = 14)
     ax.ax_heatmap.set_yticklabels(ax.ax_heatmap.get_ymajorticklabels(), fontsize = 14, rotation=0)
     ax.fig.suptitle(f'Compartment vectors cluster map, resolution={resolution}', x=0.5, y=1.1)
-    plt.savefig(output, dpi=300, bbox_inches='tight', format='pdf')
+    for out in output:
+    	plt.savefig(out, dpi=300, bbox_inches='tight')
 
 
 #main
 plot_eigenvector_correlation(vecs=snakemake.input.eigvecs, 
                              vals=snakemake.input.eigvals, 
-                             output=snakemake.output[0], 
+                             output=snakemake.output, 
                              resolution=snakemake.params.resolution, 
                              fix_chr=snakemake.params.chrom, 
                              fix_row=snakemake.params.eig,)
