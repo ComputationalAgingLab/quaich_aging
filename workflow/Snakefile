@@ -985,7 +985,7 @@ rule plot_avg_loop_ratio:
 
 onsuccess:
     from snakemake.report import auto_report
-    auto_report(workflow.persistence.dag, "results/report.html")
+    auto_report(workflow.persistence.dag, f"{project_folder}/report.html")
 # def download_file(file, local_filename):
 #     import requests
 #     import tqdm
